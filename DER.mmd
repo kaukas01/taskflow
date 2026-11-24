@@ -1,0 +1,35 @@
+---
+title: TaskFlow — DER (modelo entidade-relacionamento)
+---
+erDiagram
+    USUARIOS ||--o{ TAREFAS : "cria (1:N)"
+    USUARIOS ||--o{ TAGS : "possui (1:N)"
+    TAREFAS  ||--o{ TAREFA_TAG : "recebe"
+    TAGS     ||--o{ TAREFA_TAG : "classifica"
+
+    USUARIOS {
+        INT id PK "AUTO_INCREMENT"
+        VARCHAR nome "NOT NULL"
+        VARCHAR email UK "UNIQUE"
+        VARCHAR senha_hash "bcrypt, nunca a senha"
+        TIMESTAMP criado_em
+    }
+    TAREFAS {
+        INT id PK "AUTO_INCREMENT"
+        INT usuario_id FK "→ usuarios.id"
+        VARCHAR titulo "CHECK não vazio"
+        VARCHAR descricao "NULL"
+        ENUM prioridade "alta, media, baixa"
+        ENUM status "pendente, em_andamento, concluida"
+        DATE prazo "NULL"
+        TIMESTAMP criada_em
+    }
+    TAGS {
+        INT id PK "AUTO_INCREMENT"
+        INT usuario_id FK "→ usuarios.id"
+        VARCHAR nome "UNIQUE com usuario_id"
+    }
+    TAREFA_TAG {
+        INT tarefa_id PK, FK "→ tarefas.id"
+        INT tag_id PK, FK "→ tags.id"
+    }

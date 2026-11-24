@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#16213e" />
+    <title>TaskFlow</title>
+    <link rel="stylesheet" href="./src/estilo.css" />
+  </head>
+  <body>
+    <header class="cabecalho">
+      <div class="cabecalho__marca">
+        <svg class="logo" width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">
+          <rect x="2" y="6" width="28" height="6" rx="3" fill="#e9a23b" />
+          <rect x="2" y="13" width="20" height="6" rx="3" fill="#6f9bff" />
+          <rect x="2" y="20" width="12" height="6" rx="3" fill="#2fd1a1" />
+        </svg>
+        <h1 class="cabecalho__titulo">TaskFlow</h1>
+      </div>
+      <div class="cabecalho__acoes">
+        <span class="avatar" id="avatar" aria-hidden="true" hidden></span>
+        <span id="usuario-nome"></span>
+        <button id="botao-sair" class="botao botao--pequeno botao--fantasma" type="button" hidden>Sair</button>
+      </div>
+    </header>
+    <div class="faixa-fluxo" aria-hidden="true"></div>
+
+    <!-- ===== Tela de entrada: criar conta e entrar ===== -->
+    <section id="tela-entrada" class="entrada">
+      <div class="entrada__marca">
+        <h2 class="entrada__titulo">Veja suas tarefas andarem.</h2>
+        <p class="entrada__texto">
+          Cada tarefa começa pendente, entra em andamento e termina concluída. O TaskFlow mostra
+          onde cada uma está e o que está atrasado.
+        </p>
+        <div class="fluxo fluxo--demo" aria-hidden="true">
+          <span class="fluxo__trecho fluxo__trecho--pendente" style="width: 34%"></span>
+          <span class="fluxo__trecho fluxo__trecho--andamento" style="width: 26%"></span>
+          <span class="fluxo__trecho fluxo__trecho--concluida" style="width: 40%"></span>
+        </div>
+        <ul class="legenda" aria-hidden="true">
+          <li class="legenda__item legenda__item--pendente">Pendente</li>
+          <li class="legenda__item legenda__item--andamento">Em andamento</li>
+          <li class="legenda__item legenda__item--concluida">Concluída</li>
+        </ul>
+      </div>
+
+      <div class="entrada__painel">
+        <form class="formulario" id="form-entrar">
+          <h2>Entrar</h2>
+          <div class="campo">
+            <label class="campo__rotulo" for="entrar-email">E-mail</label>
+            <input class="campo__entrada" id="entrar-email" type="email" autocomplete="email" />
+          </div>
+          <div class="campo">
+            <label class="campo__rotulo" for="entrar-senha">Senha</label>
+            <input class="campo__entrada" id="entrar-senha" type="password" autocomplete="current-password" />
+          </div>
+          <button class="botao botao--primario" type="submit">Entrar</button>
+        </form>
+
+        <form class="formulario" id="form-criar" hidden>
+          <h2>Criar conta</h2>
+          <div class="campo">
+            <label class="campo__rotulo" for="criar-nome">Nome</label>
+            <input class="campo__entrada" id="criar-nome" type="text" autocomplete="name" />
+          </div>
+          <div class="campo">
+            <label class="campo__rotulo" for="criar-email">E-mail</label>
+            <input class="campo__entrada" id="criar-email" type="email" autocomplete="email" />
+          </div>
+          <div class="campo">
+            <label class="campo__rotulo" for="criar-senha">Senha (6 caracteres ou mais)</label>
+            <input class="campo__entrada" id="criar-senha" type="password" autocomplete="new-password" />
+          </div>
+          <button class="botao botao--primario" type="submit">Criar conta</button>
+        </form>
+
+        <p class="campo__erro" id="erro-entrada" role="alert"></p>
+        <button class="botao botao--fantasma" id="alternar-entrada" type="button">
+          Ainda não tenho conta
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== O sistema: formulário na lateral; painel, filtros e lista ao lado ===== -->
+    <main id="tela-app" class="app" hidden>
+      <aside class="app__lateral">
+        <form class="formulario formulario--tarefa" id="form-tarefa" novalidate>
+          <h2 id="titulo-formulario">Nova tarefa</h2>
+          <div class="campo">
+            <label class="campo__rotulo" for="tarefa-titulo">Título</label>
+            <input class="campo__entrada" id="tarefa-titulo" type="text" maxlength="120" />
+          </div>
+          <div class="campo">
+            <label class="campo__rotulo" for="tarefa-descricao">Descrição (opcional)</label>
+            <textarea class="campo__entrada" id="tarefa-descricao" rows="2" maxlength="500"></textarea>
+          </div>
+          <div class="formulario__linha">
+            <div class="campo">
+              <label class="campo__rotulo" for="tarefa-prioridade">Prioridade</label>
+              <select class="campo__entrada" id="tarefa-prioridade">
+                <option value="alta">Alta</option>
+                <option value="media" selected>Média</option>
+                <option value="baixa">Baixa</option>
+              </select>
+            </div>
+            <div class="campo">
+              <label class="campo__rotulo" for="tarefa-status">Status</label>
+              <select class="campo__entrada" id="tarefa-status">
+                <option value="pendente" selected>Pendente</option>
+                <option value="em_andamento">Em andamento</option>
+                <option value="concluida">Concluída</option>
+              </select>
+            </div>
+          </div>
+          <div class="campo">
+            <label class="campo__rotulo" for="tarefa-prazo">Prazo (opcional)</label>
+            <input class="campo__entrada" id="tarefa-prazo" type="date" />
+          </div>
+          <div class="campo">
+            <label class="campo__rotulo" for="tarefa-tags">Tags (separadas por vírgula)</label>
+            <input class="campo__entrada" id="tarefa-tags" type="text" placeholder="Trabalho, Urgente" />
+          </div>
+          <div class="formulario__acoes">
+            <button class="botao botao--primario" id="botao-salvar" type="submit">Adicionar tarefa</button>
+            <button class="botao" id="botao-cancelar" type="button" hidden>Cancelar edição</button>
+          </div>
+          <p class="campo__erro" id="erro-formulario" role="alert"></p>
+        </form>
+      </aside>
+
+      <div class="app__principal">
+        <p class="aviso aviso--erro" id="erro-geral" role="alert" hidden></p>
+
+        <p id="aviso-urgente" class="aviso aviso--oculto">
+          Há tarefas de prioridade alta ainda pendentes.
+        </p>
+        <p id="aviso-ok" class="aviso aviso--ok aviso--oculto">
+          Tudo concluído. Nenhuma tarefa em aberto!
+        </p>
+
+        <section class="painel" aria-label="Resumo das tarefas">
+          <div class="fluxo" id="fluxo" role="img" aria-label="Sem tarefas ainda">
+            <span class="fluxo__trecho fluxo__trecho--pendente" id="fluxo-pendente"></span>
+            <span class="fluxo__trecho fluxo__trecho--andamento" id="fluxo-andamento"></span>
+            <span class="fluxo__trecho fluxo__trecho--concluida" id="fluxo-concluida"></span>
+          </div>
+          <ul class="estatisticas">
+            <li class="estatistica estatistica--total">
+              <span class="estatistica__numero" id="total">0</span>
+              <span class="estatistica__rotulo">Total</span>
+            </li>
+            <li class="estatistica estatistica--pendente">
+              <span class="estatistica__numero" id="pendentes">0</span>
+              <span class="estatistica__rotulo">Pendentes</span>
+            </li>
+            <li class="estatistica estatistica--andamento">
+              <span class="estatistica__numero" id="em-andamento">0</span>
+              <span class="estatistica__rotulo">Em andamento</span>
+            </li>
+            <li class="estatistica estatistica--concluida">
+              <span class="estatistica__numero" id="concluidas">0</span>
+              <span class="estatistica__rotulo">Concluídas</span>
+            </li>
+          </ul>
+        </section>
+
+        <div class="filtros">
+          <!-- Estes dois filtros rodam no NAVEGADOR, sobre a lista já carregada -->
+          <div class="filtros__grupo" id="filtros-status">
+            <button class="filtro filtro--ativo" type="button" data-status="todos">Todas</button>
+            <button class="filtro" type="button" data-status="pendente">Pendentes</button>
+            <button class="filtro" type="button" data-status="em_andamento">Em andamento</button>
+            <button class="filtro" type="button" data-status="concluida">Concluídas</button>
+          </div>
+          <div class="filtros__linha">
+            <input class="busca" id="busca" type="search" placeholder="Pesquisar por título ou tag" />
+            <!-- Este roda no BANCO (WHERE prazo < CURDATE()) -->
+            <label class="interruptor">
+              <input type="checkbox" id="so-atrasadas" />
+              Só atrasadas
+            </label>
+            <button class="botao botao--pequeno" id="botao-exportar" type="button">Exportar CSV</button>
+          </div>
+        </div>
+
+        <ul class="lista" id="lista"></ul>
+        <p class="vazio" id="vazio" hidden>Nenhuma tarefa encontrada.</p>
+      </div>
+    </main>
+
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>
